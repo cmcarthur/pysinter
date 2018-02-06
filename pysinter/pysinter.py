@@ -27,24 +27,17 @@ class Sinter(object):
 					"Authorization": "Token %s" % self.api_token
 				}
 			}
+	@staticmethod
+	def _validated_response(response, expected_status_codes):
+		if response.status_code not in expected_status_codes:
+			raise RuntimeError(response.content)
+		return json.loads(response.content)
 
 	def _get(self, url_suffix):
-		# url = self.api_base + url_suffix
-		# headers = {'Authorization': 'Token %s' % self.api_token}
-		# response = requests.get(url, headers=headers)
-		response = requests.get(**self._build_request(url_suffix))
-		if response.status_code != 200:
-			raise RuntimeError(response.content)
-		return json.loads(response.content)
+		return self._validated_response(requests.get(**self._build_request(url_suffix)), [200])
 
 	def _post(self, url_suffix):
-		# url = self.api_base + url_suffix
-		# headers = {'Authorization': 'token %s' % self.api_token}
-		# response = requests.post(url, headers=headers)
-		response = requests.post(**self._build_request(url_suffix))
-		if response.status_code != 201:
-			raise RuntimeError(response.content)
-		return json.loads(response.content)
+		return self._validated_response(requests.post(**self._build_request(url_suffix)), [201])
 
 	def list_projects(self):
 		return self._get('/accounts/%s/projects/' % self.account_id)['data']
