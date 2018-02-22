@@ -27,6 +27,7 @@ class Sinter(object):
 					"Authorization": "Token %s" % self.api_token
 				}
 			}
+
 	@staticmethod
 	def _validated_response(response, expected_status_codes):
 		if response.status_code not in expected_status_codes:
